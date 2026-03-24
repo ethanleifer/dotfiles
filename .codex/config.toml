@@ -1,0 +1,19 @@
+model = "gpt-5.4"
+model_reasoning_effort = "medium"
+personality = "pragmatic"
+notify = ["fish", "-c", "codex-notify $argv[1]", "--"]
+[projects."/Users/ethanleifer/Desktop/Developer/github/agency-inc/agency-worktrees/main"]
+trust_level = "trusted"
+
+[projects."/Users/ethanleifer/Desktop/Developer/github/agency-inc/agency/main"]
+trust_level = "trusted"
+
+[projects."/Users/ethanleifer/Desktop/ethan-notes-2025"]
+trust_level = "trusted"
+
+[notice.model_migrations]
+gpt-5-codex = "gpt-5.3-codex"
+"gpt-5.3-codex" = "gpt-5.4"
+
+[mcp_servers.posthog]
+url = "https://mcp.posthog.com/mcp"

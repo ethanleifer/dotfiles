@@ -1,0 +1,56 @@
+{
+  "autoUpdatesChannel": "stable",
+  "minimumVersion": "2.1.5",
+  "skipDangerousModePermissionPrompt": true,
+  "model": "opus[1m]",
+  "hooks": {
+    "Notification": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "fish -c 'agent-notify \"Claude Code\" \"Awaiting your input\"'"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "fish -c 'agent-notify \"Claude Code\" \"Task completed\"'"
+          }
+        ]
+      }
+    ]
+  },
+  "permissions": {
+    "allow": [
+      "Bash(gh browse:*)",
+      "Bash(gh pr checks:*)",
+      "Bash(gh pr close:*)",
+      "Bash(gh pr comment:*)",
+      "Bash(gh pr create:*)",
+      "Bash(gh pr diff:*)",
+      "Bash(gh pr edit:*)",
+      "Bash(gh pr list:*)",
+      "Bash(gh pr merge:*)",
+      "Bash(gh pr ready:*)",
+      "Bash(gh pr reopen:*)",
+      "Bash(gh pr status:*)",
+      "Bash(gh pr update-branch:*)",
+      "Bash(gh pr view:*)",
+      "Bash(gh repo list:*)",
+      "Bash(gh repo view:*)",
+      "Bash(gh run list:*)",
+      "Bash(gh run rerun:*)",
+      "Bash(gh run view:*)",
+      "Bash(gh run watch:*)",
+      "Bash(gh workflow list:*)",
+      "Bash(gh workflow run:*)",
+      "Bash(gh workflow view:*)"
+    ]
+  }
+}
