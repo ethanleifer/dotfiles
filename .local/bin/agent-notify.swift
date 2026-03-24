@@ -1,5 +1,5 @@
 // Build: swiftc ~/.local/bin/agent-notify.swift -o ~/.local/bin/agent-notify -framework Cocoa
-// Usage: ~/.local/bin/agent-notify "Title" "Message"
+// Usage: ~/.local/bin/agent-notify "Title" "Message" [kitty-window-id]
 
 import Cocoa
 
@@ -16,7 +16,7 @@ class ClickableView: NSVisualEffectView {
 }
 
 class NotificationWindow: NSWindow {
-    init(title: String, message: String) {
+    init(title: String, message: String, kittyWindowId: String?) {
         let width: CGFloat = 340
         let height: CGFloat = 90
         let screen = NSScreen.main!
@@ -42,9 +42,25 @@ class NotificationWindow: NSWindow {
         visual.layer?.cornerRadius = 14
         visual.layer?.masksToBounds = true
         visual.onClick = {
-            if let appURL = NSWorkspace.shared.urlForApplication(withBundleIdentifier: "org.alacritty") {
+            let kitten = "/opt/homebrew/bin/kitten"
+
+            // Find the kitty socket (has PID suffix)
+            let fm = FileManager.default
+            let sockets = (try? fm.contentsOfDirectory(atPath: "/tmp"))?.filter { $0.hasPrefix("mykitty-") }.map { "/tmp/\($0)" } ?? []
+            let socket = sockets.first
+
+            if let windowId = kittyWindowId, let sock = socket {
+                let focusWindow = Process()
+                focusWindow.executableURL = URL(fileURLWithPath: kitten)
+                focusWindow.arguments = ["@", "--to", "unix:\(sock)", "focus-window", "--match", "id:\(windowId)"]
+                try? focusWindow.run()
+                focusWindow.waitUntilExit()
+            }
+
+            if let appURL = NSWorkspace.shared.urlForApplication(withBundleIdentifier: "net.kovidgoyal.kitty") {
                 NSWorkspace.shared.openApplication(at: appURL, configuration: NSWorkspace.OpenConfiguration())
             }
+
             NSAnimationContext.runAnimationGroup({ context in
                 context.duration = 0.2
                 self.animator().alphaValue = 0
@@ -77,8 +93,9 @@ app.setActivationPolicy(.accessory)
 let args = CommandLine.arguments
 let title = args.count > 1 ? args[1] : "Agent"
 let message = args.count > 2 ? args[2] : "Needs attention"
+let kittyWindowId: String? = args.count > 3 ? args[3] : nil
 
-let window = NotificationWindow(title: title, message: message)
+let window = NotificationWindow(title: title, message: message, kittyWindowId: kittyWindowId)
 window.orderFrontRegardless()
 
 DispatchQueue.main.asyncAfter(deadline: .now() + 5.0) {
