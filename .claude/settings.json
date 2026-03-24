@@ -50,7 +50,8 @@
       "Bash(gh run watch:*)",
       "Bash(gh workflow list:*)",
       "Bash(gh workflow run:*)",
-      "Bash(gh workflow view:*)"
+      "Bash(gh workflow view:*)",
+      "WebFetch(*)"
     ]
   }
 }
