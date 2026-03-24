@@ -3,6 +3,18 @@
 
 import Cocoa
 
+class ClickableView: NSVisualEffectView {
+    var onClick: (() -> Void)?
+
+    override func mouseDown(with event: NSEvent) {
+        onClick?()
+    }
+
+    override func resetCursorRects() {
+        addCursorRect(bounds, cursor: .pointingHand)
+    }
+}
+
 class NotificationWindow: NSWindow {
     init(title: String, message: String) {
         let width: CGFloat = 340
@@ -23,12 +35,23 @@ class NotificationWindow: NSWindow {
         self.backgroundColor = .clear
         self.collectionBehavior = [.canJoinAllSpaces, .stationary]
 
-        let visual = NSVisualEffectView(frame: NSRect(x: 0, y: 0, width: width, height: height))
+        let visual = ClickableView(frame: NSRect(x: 0, y: 0, width: width, height: height))
         visual.material = .hudWindow
         visual.state = .active
         visual.wantsLayer = true
         visual.layer?.cornerRadius = 14
         visual.layer?.masksToBounds = true
+        visual.onClick = {
+            if let appURL = NSWorkspace.shared.urlForApplication(withBundleIdentifier: "org.alacritty") {
+                NSWorkspace.shared.openApplication(at: appURL, configuration: NSWorkspace.OpenConfiguration())
+            }
+            NSAnimationContext.runAnimationGroup({ context in
+                context.duration = 0.2
+                self.animator().alphaValue = 0
+            }, completionHandler: {
+                NSApp.terminate(nil)
+            })
+        }
 
         let titleLabel = NSTextField(labelWithString: title)
         titleLabel.font = NSFont.boldSystemFont(ofSize: 14)
