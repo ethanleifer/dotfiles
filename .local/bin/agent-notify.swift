@@ -1,3 +1,6 @@
+// Build: swiftc ~/.local/bin/agent-notify.swift -o ~/.local/bin/agent-notify -framework Cocoa
+// Usage: ~/.local/bin/agent-notify "Title" "Message"
+
 import Cocoa
 
 class NotificationWindow: NSWindow {
